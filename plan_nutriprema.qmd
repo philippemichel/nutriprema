@@ -1,0 +1,99 @@
+---
+title: "NUTRI'PRÉMA"
+subtitle: "Plan d'analyse statistique"
+author: "Philippe MICHEL"
+bibliography: stat.bib
+thanks: "Paul GALISSON, Dr Suzanne BORRHOMEE - Dermatologie"
+lang: fr-FR
+date: today
+date-format: "DD/MM/YYYY"
+format: pdf
+pdf-engine: lualatex
+include-in-header: 
+   text: 
+     \usepackage[output-decimal-marker={,}, mode = text]{siunitx}
+keep-tex: true
+number-sections: true
+toc: false
+lof: false
+lot: false
+mainfont: Faune
+mainfontoptions:
+  - Numbers=OldStyle
+  - Ligatures=TeX
+sansfont: Myriad Pro
+sansfontoptions:
+  - Ligatures=TeX
+mathfontoptions: 
+  - Numbers=Proportional
+fig-cap-location: bottom
+tbl-cap-location: top
+class: scrartcl
+classoption: [french]
+papersize: a4paper
+editor: source
+cite-method: natbib
+license: "CC BY-SA"
+execute: 
+  echo: false
+  warning: false
+  message: false
+---
+
+
+
+Ce document ne concerne que l'analyse statistique des données.
+
+
+```{r}
+#| label: info
+rm(list = ls())
+library("baseph")
+library("tidyverse")
+library("kableExtra")
+library(epiDisplay)
+# sessionInfo()
+```
+
+```{r}
+#| label: nbcas
+dd <- 0.5
+zz  <- n.for.2means(0, dd, 1, 1)
+nn <- floor(zz[[6]] * 1.1)+1
+```
+
+
+Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de 0,05 & la puissance de 0,8.
+
+Sauf indication contraire les données numériques seront présentées par leur médiane avec les quartiles é comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre *&* le pourcentage avec son intervalle de confiance calculé par bootstrap & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables importantes. 
+
+## Calcul du nombre de cas
+
+Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime que la différence entre les deux groupe sera d'environ $\num{`r dd`}$ , il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2). 
+
+## Description
+ 
+Les données démographiques ainsi que le bilan à la naissance seront présentés sur un tableau en comparant les deux groupes pour rechercher d'éventuels biais. 
+ 
+Le décompte des données manquantes variable par variable sera réalisé & présenté par un tableau ou un graphique. Une analyse de corrélations portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
+
+Une analyse factorielle sera tentée (Analyse en Correspondances Multiples) après imputation des données manquantes avec classification des cas si possible.
+
+## Critère principal
+
+*Comparer la croissance pondérale des nouveau-nés prématurés tardifs (`PT`) pris en charge en Unité Kangourou (`UK`) versus ceux pris en charge en néonatologie.*
+
+L'évolution du Z-score pour le poids sera comparée entre les deux groupes par un test du t de Student si les conditions de normalité sont remplies sinon par un test de Wilcoxon. Plusieurs graphiques seront dessinés :
+
+- Comparaison simple (Box-plot ou Violin graph)
+- Évolution cas par cas (graphique en fagot)
+- Graphique en réseau d'évolution après regroupement en classe des cas.
+
+Un lien entre les données démographique ou à la naissance & l'évolution sera recherché. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant. Pour cette détermination du meilleur modèle de régression logistique on utilisera les données après imputation des données manquantes. Par contre, une fois le modèle retenu, les calculs présentés seront ceux réalisés sur les données réelles.
+
+## Technique {.appendix}
+
+L'analyse statistique sera réalisée avec le logiciel **R**[@rstat] & divers packages en particulier `baseph` [@baseph] `tidyverse` [@tidy] & `FactoMineR` [@facto].
+
+
+
