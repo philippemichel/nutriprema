@@ -12,6 +12,7 @@ pdf-engine: lualatex
 include-in-header: 
    text: 
      \usepackage[output-decimal-marker={,}, mode = text]{siunitx}
+     \usepackage{textgreek}
 keep-tex: true
 number-sections: true
 toc: false
@@ -31,6 +32,7 @@ tbl-cap-location: top
 class: scrartcl
 classoption: [french]
 papersize: a4paper
+fontsize: 10 pt
 editor: source
 cite-method: natbib
 license: "CC BY-SA"
@@ -63,21 +65,31 @@ nn <- floor(zz[[6]] * 1.1)+1
 ```
 
 
-Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de 0,05 & la puissance de 0,8.
+Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque \textalpha{} retenu est de 0,05 & la puissance de 0,8.
 
-Sauf indication contraire les données numériques seront présentées par leur médiane avec les quartiles é comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre *&* le pourcentage avec son intervalle de confiance calculé par bootstrap & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables importantes. 
+Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon présnetées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance calculé par bootstrap & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants. 
 
 ## Calcul du nombre de cas
 
-Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime que la différence entre les deux groupe sera d'environ $\num{`r dd`}$ , il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2). 
+Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime qu'une différence entre les deux groupe de $\num{`r dd`}$ a un sens clinique, il faudrait **`r nn` cas** par groupe (risque \textalpha{} 0,05 & \textbeta{} 0,2). 
+
+
+### Données manquantes
+
+Le décompte des données manquantes sera réalisé & présenté par un tableau ou un graphique. Les dossiers où une des données nécessaires pour l'étude du critère principal (poids à la naissance & à 12 mois, groupe...) serait manquante seront exclus de l'étude. De même les variables comportant trop de données manquantes ou non utilisables ne seront pas prises en compte.
+
+Après ce premier tri une imputation des données manquantes sera réalisée pour deux calculs : 
+
+- l’analyse factorielle,
+- la recherche du meilleur modèle par step-by-tep descendant pour les analyses par régression (logistique ou linéaire). Néanmoins dans ce cas, après choix du modèle, les calculs seront faits avec les données réelles. 
 
 ## Description
  
 Les données démographiques ainsi que le bilan à la naissance seront présentés sur un tableau en comparant les deux groupes pour rechercher d'éventuels biais. 
  
-Le décompte des données manquantes variable par variable sera réalisé & présenté par un tableau ou un graphique. Une analyse de corrélations portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
+Une analyse de corrélations (package `correlation` [@corr]) portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
 
-Une analyse factorielle sera tentée (Analyse en Correspondances Multiples) après imputation des données manquantes avec classification des cas si possible.
+Une analyse factorielle (package `FactoMineR` [@facto] & `factoextra` [@fextra]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
 
 ## Critère principal
 
@@ -91,9 +103,75 @@ L'évolution du Z-score pour le poids sera comparée entre les deux groupes par 
 
 Un lien entre les données démographique ou à la naissance & l'évolution sera recherché. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant. Pour cette détermination du meilleur modèle de régression logistique on utilisera les données après imputation des données manquantes. Par contre, une fois le modèle retenu, les calculs présentés seront ceux réalisés sur les données réelles.
 
+## Critères secondaires
+
+Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion lié aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Une analyse des facteurs pouvant influer sur ce résultat & en particulier par régression (même protocole qu'au paragraphe précédent) ne sera réalisé que si le test principal est significatif au seuil de 10 % & si le nombre de cas suffisant. 
+
+
+### Critères 1 & 2
+*Comparaison à 12 mois de l’évolution du Z-score de la taille & du PC entre les deux groupes*
+
+Le même protocole que pour le critère principal sera utilisé pour chacun des deux critères. 
+
+
+### Critère 3
+*Comparaison de la durée de l’allaitement (mixte ou exclusif) total  en semaines entre les deux groupes. Ce critère sera évalué à 12 mois.*
+
+Une comparaison simple entre les deux groupe sera réalisée (test t de Student ou de Wilcoxon).
+
+
+### Critère 4
+*Comparaison du nombre d’enfants allaités à la sortie de maternité entre les deux groupes*
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
+
+### Critère 5
+*Comparaison du devenir neurologique à 12 mois entre les deux groupes* 
+
+#### Examen neurologique standard
+*Tonus axial (normal ou non), tonus périphérique (normal ou non), tenue assise (acquise ou non), acquisition d’un mode de déplacement (Oui/Non, si oui lequel), communication verbale (adaptée / décalage)*
+
+Un tableau de corrélation sera calculé pour toutes ces données. Si certaines ont un coefficient de corrélation trop fort on n'étudiera que certaines variables (seuil à définir selon le nombre de cas utilisables).
+
+Un test  du $\chi^2$ sera réalisé pour chacun des tests retenus.
+
+#### Imageries cérébrale
+
+Un test  du $\chi^2$ sera réalisé.
+
+### Critère 6
+*Comparaison du nombre de ré-hospitalisations à 12 mois entre les deux groupes*
+
+Un test  du $\chi^2$ sera réalisé.
+
+### Critère 7
+*Comparaison du nombre de prescriptions de séances de kinésithérapie à 12 mois entre les deux groupes*
+
+### Critère 8
+*Comparaison du nombre de prescriptions de psychomotricité à 12 mois entre les deux groupes*
+
+Un test  du $\chi^2$ sera réalisé.
+
+### Critère 9
+*Comparaison de la présence de morbidité hospitalière (lié à l’hospitalisation initiale) entre les deux groupes (infections, ictère, détresse respiratoire, détresse neurologique, hypotonie…)*
+
+Un test  du $\chi^2$ sera réalisé pour chaque critère.
+
+### Critère 10
+*Comparaison du temps d’autonomisation alimentaire entre les deux groupes (date de retrait de la sonde gastrique)*
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
+
+### Critère 11
+*Évaluation du terme corrigé de sortie entre les deux groupes.*
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
+
 ## Technique {.appendix}
 
-L'analyse statistique sera réalisée avec le logiciel **R**[@rstat] & divers packages en particulier `baseph` [@baseph] `tidyverse` [@tidy] & `FactoMineR` [@facto].
+L'analyse statistique sera réalisée grâce au logiciel **R** [@rstat]. Outre les packages cités dans le texte, on utilisera en particulier les  packages `baseph` [@baseph] & `tidyverse` [@tidy]. Les graphiques seront proncipalement réalisés grâce au package `ggplot2` [@ggplot].
+
+Un dépôt Git sera utilisé (<https://github.com/philippemichel/nutriprema>) qui ne contiendra que le code & un jeu de données réduit & faussé mais aucun résultat. 
 
 
 
