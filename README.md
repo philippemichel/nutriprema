@@ -8,6 +8,8 @@
 
 
 **prov.R** : essais divers
+
 **plan.nutriprema.qmd** : plan d'analyse, calcul du nb de cas.
+
 **stat.bib** : Références bibliographiques concernant en particulier les packages utilisés.
 
