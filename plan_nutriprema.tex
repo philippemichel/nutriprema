@@ -4,6 +4,7 @@
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
+  10 pt,
   a4paperpaper,
   french]{scrartcl}
 
@@ -90,7 +91,7 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage[output-decimal-marker={,}, mode = text]{siunitx}
+\usepackage[output-decimal-marker={,}, mode = text]{siunitx} \usepackage{textgreek}
 \KOMAoption{captions}{tableheading}
 \makeatletter
 \makeatother
@@ -181,33 +182,58 @@ Dermatologie}}
 \makeatother
 \subtitle{Plan d'analyse statistique}
 \author{Philippe MICHEL}
-\date{27/01/2023}
+\date{29/01/2023}
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, boxrule=0pt, enhanced, interior hidden, breakable, borderline west={3pt}{0pt}{shadecolor}, frame hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, enhanced, borderline west={3pt}{0pt}{shadecolor}, frame hidden, breakable, sharp corners]}{\end{tcolorbox}}\fi
 
 Ce document ne concerne que l'analyse statistique des données.
 
 Il s'agit d'une étude prospective non interventionnelle mono-centrique
-non randomisée. Le risque \(\alpha\) retenu est de 0,05 \& la puissance
-de 0,8.
+non randomisée. Le risque \textalpha{} retenu est de 0,05 \& la
+puissance de 0,8.
 
 Sauf indication contraire les données numériques seront présentées par
-leur médiane avec les quartiles é comparées par des tests du t de
-Student si les conditions de normalité sont remplies, sinon par des
-tests de Wilcoxon. Les données catégorielles seront présentées par par
-le nombre \emph{\&} le pourcentage avec son intervalle de confiance
-calculé par bootstrap \& comparées par des tests du \(\chi^2\). Des
-graphiques pourront être réalisés pour les variables importantes.
+leur moyenne \& écart-type \& comparées par des tests du t de Student si
+les conditions de normalité sont remplies, sinon présnetées par leur
+médiane avec les quartiles \& comparées par des tests de Wilcoxon. Les
+données catégorielles seront présentées par par le nombre \& le
+pourcentage avec son intervalle de confiance calculé par bootstrap \&
+comparées par des tests du \(\chi^2\). Des graphiques pourront être
+réalisés pour les variables ou tests importants.
 
 \hypertarget{calcul-du-nombre-de-cas}{%
 \section{Calcul du nombre de cas}\label{calcul-du-nombre-de-cas}}
 
 Le critère de base est l'évolution du Z-score entre la naissance \& 12
-mois. Si on estime que la différence entre les deux groupe sera
-d'environ \(\num{0.5}\) , il faudrait \textbf{70 cas} par groupe (risque
-\(\alpha\) 0,05 \& \(\beta\) 0,2).
+mois. Si on estime qu'une différence entre les deux groupe de
+\(\num{0.5}\) a un sens clinique, il faudrait \textbf{70 cas} par groupe
+(risque \textalpha{} 0,05 \& \textbeta{} 0,2).
+
+\hypertarget{donnuxe9es-manquantes}{%
+\subsection{Données manquantes}\label{donnuxe9es-manquantes}}
+
+Le décompte des données manquantes sera réalisé \& présenté par un
+tableau ou un graphique. Les dossiers où une des données nécessaires
+pour l'étude du critère principal (poids à la naissance \& à 12 mois,
+groupe\ldots) serait manquante seront exclus de l'étude. De même les
+variables comportant trop de données manquantes ou non utilisables ne
+seront pas prises en compte.
+
+Après ce premier tri une imputation des données manquantes sera réalisée
+pour deux calculs :
+
+\begin{itemize}
+\tightlist
+\item
+  l'analyse factorielle,
+\item
+  la recherche du meilleur modèle par step-by-tep descendant pour les
+  analyses par régression (logistique ou linéaire). Néanmoins dans ce
+  cas, après choix du modèle, les calculs seront faits avec les données
+  réelles.
+\end{itemize}
 
 \hypertarget{description}{%
 \section{Description}\label{description}}
@@ -216,16 +242,17 @@ Les données démographiques ainsi que le bilan à la naissance seront
 présentés sur un tableau en comparant les deux groupes pour rechercher
 d'éventuels biais.
 
-Le décompte des données manquantes variable par variable sera réalisé \&
-présenté par un tableau ou un graphique. Une analyse de corrélations
+Une analyse de corrélations (package \texttt{correlation} \citep{corr})
 portant sur tous les items sera réalisée. À la suite de ces contrôles
 des variables pourront être exclues de la suite de l'analyse (trop de
 donnée manquantes ou variables trop corrélées) avec l'accord du
 promoteur.
 
-Une analyse factorielle sera tentée (Analyse en Correspondances
-Multiples) après imputation des données manquantes avec classification
-des cas si possible.
+Une analyse factorielle (package \texttt{FactoMineR} \citep{facto} \&
+\texttt{factoextra} \citep{fextra}) sera tentée (Analyse en
+Correspondances Multiples) avec classification des cas si possible après
+imputation des données manquantes (package \texttt{MissMDA}
+\citep{missm}) .
 
 \hypertarget{crituxe8re-principal}{%
 \section{Critère principal}\label{crituxe8re-principal}}
@@ -259,13 +286,130 @@ régression logistique on utilisera les données après imputation des
 données manquantes. Par contre, une fois le modèle retenu, les calculs
 présentés seront ceux réalisés sur les données réelles.
 
+\hypertarget{crituxe8res-secondaires}{%
+\section{Critères secondaires}\label{crituxe8res-secondaires}}
+
+Vu le grand nombre de critères secondaires \& le risque élevé de fausse
+conclusion lié aux tests multiples les critères secondaires ne seront
+étudiés que si le nombre de cas utilisables est suffisant. Une analyse
+des facteurs pouvant influer sur ce résultat \& en particulier par
+régression (même protocole qu'au paragraphe précédent) ne sera réalisé
+que si le test principal est significatif au seuil de 10 \% \& si le
+nombre de cas suffisant.
+
+\hypertarget{crituxe8res-1-2}{%
+\subsection{Critères 1 \& 2}\label{crituxe8res-1-2}}
+
+\emph{Comparaison à 12 mois de l'évolution du Z-score de la taille \& du
+PC entre les deux groupes}
+
+Le même protocole que pour le critère principal sera utilisé pour chacun
+des deux critères.
+
+\hypertarget{crituxe8re-3}{%
+\subsection{Critère 3}\label{crituxe8re-3}}
+
+\emph{Comparaison de la durée de l'allaitement (mixte ou exclusif) total
+en semaines entre les deux groupes. Ce critère sera évalué à 12 mois.}
+
+Une comparaison simple entre les deux groupe sera réalisée (test t de
+Student ou de Wilcoxon).
+
+\hypertarget{crituxe8re-4}{%
+\subsection{Critère 4}\label{crituxe8re-4}}
+
+\emph{Comparaison du nombre d'enfants allaités à la sortie de maternité
+entre les deux groupes}
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de
+Student ou de Wilcoxon).
+
+\hypertarget{crituxe8re-5}{%
+\subsection{Critère 5}\label{crituxe8re-5}}
+
+\emph{Comparaison du devenir neurologique à 12 mois~entre les deux
+groupes}
+
+\hypertarget{examen-neurologique-standard}{%
+\subsubsection{Examen neurologique
+standard}\label{examen-neurologique-standard}}
+
+\emph{Tonus axial (normal ou non), tonus périphérique (normal ou non),
+tenue assise (acquise ou non), acquisition d'un mode de déplacement
+(Oui/Non, si oui lequel), communication verbale (adaptée / décalage)}
+
+Un tableau de corrélation sera calculé pour toutes ces données. Si
+certaines ont un coefficient de corrélation trop fort on n'étudiera que
+certaines variables (seuil à définir selon le nombre de cas
+utilisables).
+
+Un test du \(\chi^2\) sera réalisé pour chacun des tests retenus.
+
+\hypertarget{imageries-cuxe9ruxe9brale}{%
+\subsubsection{Imageries cérébrale}\label{imageries-cuxe9ruxe9brale}}
+
+Un test du \(\chi^2\) sera réalisé.
+
+\hypertarget{crituxe8re-6}{%
+\subsection{Critère 6}\label{crituxe8re-6}}
+
+\emph{Comparaison du nombre de ré-hospitalisations à 12 mois entre les
+deux groupes}
+
+Un test du \(\chi^2\) sera réalisé.
+
+\hypertarget{crituxe8re-7}{%
+\subsection{Critère 7}\label{crituxe8re-7}}
+
+\emph{Comparaison du nombre de prescriptions de séances de
+kinésithérapie à 12 mois entre les deux groupes}
+
+\hypertarget{crituxe8re-8}{%
+\subsection{Critère 8}\label{crituxe8re-8}}
+
+\emph{Comparaison du nombre de prescriptions de psychomotricité à 12
+mois entre les deux groupes}
+
+Un test du \(\chi^2\) sera réalisé.
+
+\hypertarget{crituxe8re-9}{%
+\subsection{Critère 9}\label{crituxe8re-9}}
+
+\emph{Comparaison de la présence de morbidité hospitalière (lié à
+l'hospitalisation initiale) entre les deux groupes (infections, ictère,
+détresse respiratoire, détresse neurologique, hypotonie\ldots)}
+
+Un test du \(\chi^2\) sera réalisé pour chaque critère.
+
+\hypertarget{crituxe8re-10}{%
+\subsection{Critère 10}\label{crituxe8re-10}}
+
+\emph{Comparaison du temps d'autonomisation alimentaire entre les deux
+groupes (date de retrait de la sonde gastrique)}
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de
+Student ou de Wilcoxon).
+
+\hypertarget{crituxe8re-11}{%
+\subsection{Critère 11}\label{crituxe8re-11}}
+
+\emph{Évaluation du terme corrigé de sortie entre les deux groupes.}
+
+Une comparaison simple entre les deux groupes sera réalisée (test t de
+Student ou de Wilcoxon).
+
 \hypertarget{technique}{%
 \section{Technique}\label{technique}}
 
-L'analyse statistique sera réalisée avec le logiciel
-\textbf{R}\citep{rstat} \& divers packages en particulier
-\texttt{baseph} \citep{baseph} \texttt{tidyverse} \citep{tidy} \&
-\texttt{FactoMineR} \citep{facto}.
+L'analyse statistique sera réalisée grâce au logiciel \textbf{R}
+\citep{rstat}. Outre les packages cités dans le texte, on utilisera en
+particulier les packages \texttt{baseph} \citep{baseph} \&
+\texttt{tidyverse} \citep{tidy}. Les graphiques seront proncipalement
+réalisés grâce au package \texttt{ggplot2} \citep{ggplot}.
+
+Un dépôt Git sera utilisé
+(\url{https://github.com/philippemichel/nutriprema}) qui ne contiendra
+que le code \& un jeu de données réduit \& faussé mais aucun résultat.
 
 
   \bibliography{stat.bib}
