@@ -89,7 +89,8 @@ Les données démographiques ainsi que le bilan à la naissance seront présent�
  
 Une analyse de corrélations (package `correlation` [@corr]) portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
 
-Une analyse factorielle (package `FactoMineR` [@facto] & `factoextra` [@fextra]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
+Une analyse factorielle (package `Fact   
+oMineR` [@facto] & `factoextra` [@fextra]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
 
 ## Critère principal
 
