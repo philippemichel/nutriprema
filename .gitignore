@@ -45,3 +45,5 @@ vignettes/*.pdf
 *.Rproj
 *.csl
 *.tex
+
+/.quarto/

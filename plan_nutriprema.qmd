@@ -1,48 +1,6 @@
 ---
-title: "NUTRI'PRÉMA"
 subtitle: "Plan d'analyse statistique"
-author: "Philippe MICHEL"
-bibliography: stat.bib
-thanks: "Paul GALISSON, Dr Suzanne BORRHOMEE - Dermatologie"
-lang: fr-FR
-date: today
-date-format: "DD/MM/YYYY"
-format: pdf
-pdf-engine: lualatex
-include-in-header: 
-   text: 
-     \usepackage[output-decimal-marker={,}, mode = text]{siunitx}
-     \usepackage{textgreek}
-keep-tex: true
-number-sections: true
-toc: false
-lof: false
-lot: false
-mainfont: Faune
-mainfontoptions:
-  - Numbers=OldStyle
-  - Ligatures=TeX
-sansfont: Myriad Pro
-sansfontoptions:
-  - Ligatures=TeX
-mathfontoptions: 
-  - Numbers=Proportional
-fig-cap-location: bottom
-tbl-cap-location: top
-class: scrartcl
-classoption: [french]
-papersize: a4paper
-fontsize: 10 pt
-editor: source
-cite-method: natbib
-license: "CC BY-SA"
-execute: 
-  echo: false
-  warning: false
-  message: false
 ---
-
-
 
 Ce document ne concerne que l'analyse statistique des données.
 
@@ -52,9 +10,12 @@ Ce document ne concerne que l'analyse statistique des données.
 rm(list = ls())
 library("baseph")
 library("tidyverse")
+library(gtsummary)
 library("kableExtra")
 library(epiDisplay)
 # sessionInfo()
+theme_gtsummary_language(language = "fr", decimal.mark = ",")
+options(OutDec = ",")
 ```
 
 ```{r}
@@ -65,13 +26,13 @@ nn <- floor(zz[[6]] * 1.1)+1
 ```
 
 
-Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque \textalpha{} retenu est de 0,05 & la puissance de 0,8.
+Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de 0,05 & la puissance de 0,8.
 
 Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon présnetées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance calculé par bootstrap & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants. 
 
 ## Calcul du nombre de cas
 
-Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime qu'une différence entre les deux groupe de $\num{`r dd`}$ a un sens clinique, il faudrait **`r nn` cas** par groupe (risque \textalpha{} 0,05 & \textbeta{} 0,2). 
+Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime qu'une différence entre les deux groupe de `r dd` a un sens clinique, il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2). 
 
 
 ### Données manquantes
@@ -89,8 +50,7 @@ Les données démographiques ainsi que le bilan à la naissance seront présent�
  
 Une analyse de corrélations (package `correlation` [@corr]) portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
 
-Une analyse factorielle (package `Fact   
-oMineR` [@facto] & `factoextra` [@fextra]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
+Une analyse factorielle (package `FactoMineR` [@facto] & `factoextra` [@factoe]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
 
 ## Critère principal
 
@@ -102,11 +62,11 @@ L'évolution du Z-score pour le poids sera comparée entre les deux groupes par 
 - Évolution cas par cas (graphique en fagot)
 - Graphique en réseau d'évolution après regroupement en classe des cas.
 
-Un lien entre les données démographique ou à la naissance & l'évolution sera recherché. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant. Pour cette détermination du meilleur modèle de régression logistique on utilisera les données après imputation des données manquantes. Par contre, une fois le modèle retenu, les calculs présentés seront ceux réalisés sur les données réelles.
+Un lien entre les données démographique ou à la naissance & l'évolution sera recherché. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant basé sur le score AIC. Pour cette détermination du meilleur modèle de régression logistique on utilisera les données après imputation des données manquantes. Par contre, une fois le modèle retenu, les calculs présentés seront ceux réalisés sur les données réelles.
 
 ## Critères secondaires
 
-Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion lié aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Une analyse des facteurs pouvant influer sur ce résultat & en particulier par régression (même protocole qu'au paragraphe précédent) ne sera réalisé que si le test principal est significatif au seuil de 10 % & si le nombre de cas suffisant. 
+Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion liée aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Devant le nombre élevés de tests à réaliser (en particulier pour le critère 5) une correction par la méthode de Holm sera appliquée.
 
 
 ### Critères 1 & 2
@@ -134,16 +94,16 @@ Une comparaison simple entre les deux groupes sera réalisée (test t de Student
 
 Un tableau de corrélation sera calculé pour toutes ces données. Si certaines ont un coefficient de corrélation trop fort on n'étudiera que certaines variables (seuil à définir selon le nombre de cas utilisables).
 
-Un test  du $\chi^2$ sera réalisé pour chacun des tests retenus.
+Un test  du $\chi^2$ sera réalisé pour chacun des tests retenus si possible. Dans le cas contraire des tests exact de Fisher sera utilisé. 
 
 #### Imageries cérébrale
 
-Un test  du $\chi^2$ sera réalisé.
+Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
 
 ### Critère 6
 *Comparaison du nombre de ré-hospitalisations à 12 mois entre les deux groupes*
 
-Un test  du $\chi^2$ sera réalisé.
+Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
 
 ### Critère 7
 *Comparaison du nombre de prescriptions de séances de kinésithérapie à 12 mois entre les deux groupes*
@@ -151,12 +111,12 @@ Un test  du $\chi^2$ sera réalisé.
 ### Critère 8
 *Comparaison du nombre de prescriptions de psychomotricité à 12 mois entre les deux groupes*
 
-Un test  du $\chi^2$ sera réalisé.
+Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
 
 ### Critère 9
 *Comparaison de la présence de morbidité hospitalière (lié à l’hospitalisation initiale) entre les deux groupes (infections, ictère, détresse respiratoire, détresse neurologique, hypotonie…)*
 
-Un test  du $\chi^2$ sera réalisé pour chaque critère.
+Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
 
 ### Critère 10
 *Comparaison du temps d’autonomisation alimentaire entre les deux groupes (date de retrait de la sonde gastrique)*
@@ -170,9 +130,9 @@ Une comparaison simple entre les deux groupes sera réalisée (test t de Student
 
 ## Technique {.appendix}
 
-L'analyse statistique sera réalisée grâce au logiciel **R** [@rstat]. Outre les packages cités dans le texte, on utilisera en particulier les  packages `baseph` [@baseph] & `tidyverse` [@tidy]. Les graphiques seront proncipalement réalisés grâce au package `ggplot2` [@ggplot].
+L'analyse statistique sera réalisée grâce au logiciel **R** [@rstat]. Outre les packages cités dans le texte, on utilisera en particulier les  packages `baseph` [@baseph] & `tidyverse` [@tidy]. Les graphiques seront principalement réalisés grâce au package `ggplot2` [@ggplot].
 
-Un dépôt Git sera utilisé (<https://github.com/philippemichel/nutriprema>) qui ne contiendra que le code & un jeu de données réduit & faussé mais aucun résultat. 
+Un dépôt Git sera utilisé (<https://github.com/philippemichel/nutriprema>) qui ne contiendra que le code & un jeu de données réduit, anonymisé & faussé mais aucun résultat. 
 
 
 
