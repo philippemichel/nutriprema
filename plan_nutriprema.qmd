@@ -29,19 +29,19 @@ zz  <- n.for.2means(0, dd, 1, 1)
 nn <- floor(zz[[6]] * 1.1)+1
 ```
 
-Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de \num{0.05} & la \gls{puissance} de \num{0.8}.
+Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le \gls{alpha} retenu est de \num{0.05} & la \gls{puissance} de \num{0.8}.
 
-Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon présentées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants.
+Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de l'\gls{normal} sont remplies, sinon présentées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants.
 
-Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion lié aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Devant le nombre élevés de tests à réaliser (en particulier pour le critère 5) une correction par la méthode de \textsc{Benjamini} & \textsc{Hochberg} sera appliquée.
+Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion liée aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Devant le nombre élevés de tests à réaliser (en particulier pour le critère 5) une correction par la méthode de \textsc{Benjamini} & \textsc{Hochberg} pourra être appliquée.
 
 ## Calcul du nombre de cas
 
-Le critère de base est l'évolution du Z-score entre la naissance & 12 mois. Si on estime qu'une différence entre les deux groupe de `r dd` a un sens clinique, il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2).
+Le critère de base est l'évolution du Z-score entre la naissance & 12 mois. Si on estime qu'une différence entre les deux groupe de `r dd` a un sens clinique, il faudrait **`r nn` cas** exploitables par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2).
 
 ## Données manquantes
 
-Le décompte des données manquantes sera réalisé & présenté par un tableau ou un graphique. Les variables comportant trop (\> 40%) de données manquantes ou non utilisables ne seront pas prises en compte après validation par l'investigateur coordonnateur. Au besoin(analyse factorielle, régressions\dots) les données manquantes seront imputées (imputations multiples, 150 itérations au maximum --- package `missmDA`[@miss]) si considérées comme manquant de manière complètement aléatoire (`MCAR`) ou de manière aléatoire (`MAR`). Les données manquantes non aléatoires (`MNAR`) ne seront imputées qu'après avis de l'investigateur coordonnateur.
+Le décompte des données manquantes sera réalisé & présenté par un tableau ou un graphique. Les variables comportant trop (\> 40%) de données manquantes ou non utilisables ne seront pas prises en compte après validation par l'investigateur coordonnateur. Au besoin (analyse factorielle, régressions\dots) les données manquantes seront imputées (imputations multiples, 150 itérations au maximum --- package `missmDA`[@miss]) si considérées comme manquant de manière complètement aléatoire (`MCAR`) ou de manière aléatoire (`MAR`). Les données manquantes non aléatoires (`MNAR`) ne seront imputées qu'après avis de l'investigateur coordonnateur.
 
 ## Corrélations
 
