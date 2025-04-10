@@ -1,18 +1,24 @@
-title: "NUTRI'PRÉMA"
+title: "NUTRI-PRÉMA"
 lang: fr
 author:
   - name: "Dr Philippe MICHEL"
+    id: phm
+    orcid: 0000-0003-2392-7186
+    # email: philippe.michel@ght-novo.fr
     affiliations:
       name: "Hôpital NOVO"
       department: "Unité de Soutien à la Recherche Clinique"
+      city: "Pontoise"
 format:
  titlepage-pdf:
   titlepage: bg-image
   titlepage-bg-image: "novo_usrc.png"
   logo-space-after: "0\\baselineskip"
+  titlepage-include-file:
+   - generique.tex
   documentclass: scrreprt
   number-sections: true
-  titlepage-footer: "Paul GALISSON\\newline Dr Suzanne BORRHOMEE \\newline Réanimation et Médecine néonatales -- Hôpital NOVO (Site Pontoise)\\newline \\newline Chef de projet : Mme Mathilde WLODARCZYK\\newline \\newline Comparaison des différentes stratégies d’alimentation des nouveau-nés prématurés tardifs, en Unité Kangourou versus en néonatologie\\newline Étude observationnelle monocentrique \\newline \\newline \\today"
+  titlepage-footer: "\\today"
 titlepage-theme:
   title-fontstyle: ["Huge", "bfseries"]
   title-color: novo
@@ -22,10 +28,7 @@ titlepage-theme:
   vrule-width: "0.1cm"
   vrule-color: novo
 include-in-header:
-   text: |
-    \definecolor{novo}{HTML}{27484b}
-    \usepackage{siunitx}
-    \microtypecontext{kerning=french}
+   file: entete.tex
 df-print : kable
 jss-pdf:
   keep-tex: true
@@ -35,12 +38,6 @@ number-sections: true
 toc: true
 lof: true
 lot: true
-mainfont: Faune
-mainfontoptions:
-  - Ligatures=TeX
-sansfont: Myriad Pro
-sansfontoptions:
-  - Ligatures=TeX
 fig-cap-location: bottom
 tbl-cap-location: top
 classoption: [french]
@@ -48,12 +45,12 @@ papersize: a4
 editor: source
 bibliography: stat.bib
 cite-method: biblatex
-#csl: jama.csl
+csl: jama.csl
 #reference-location: margin
 #citation-location: margin
 license: "MIT"
 echo: false
 warning: false
 message: false
-cache: false
+
 

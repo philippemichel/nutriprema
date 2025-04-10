@@ -1,17 +1,21 @@
 ---
 subtitle: "Plan d'analyse statistique"
+date: "15/02/2024"
+lot: false
+lof: false
+cache: true
 ---
+# Généralités
 
 Ce document ne concerne que l'analyse statistique des données.
-
 
 ```{r}
 #| label: info
 rm(list = ls())
-library("baseph")
-library("tidyverse")
+library(baseph)
+library(tidyverse)
 library(gtsummary)
-library("kableExtra")
+library(kableExtra)
 library(epiDisplay)
 # sessionInfo()
 theme_gtsummary_language(language = "fr", decimal.mark = ",")
@@ -25,114 +29,117 @@ zz  <- n.for.2means(0, dd, 1, 1)
 nn <- floor(zz[[6]] * 1.1)+1
 ```
 
+Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de \num{0.05} & la puissance de \num{0.8}.
 
-Il s'agit d'une étude prospective non interventionnelle mono-centrique non randomisée. Le risque $\alpha$ retenu est de 0,05 & la puissance de 0,8.
+Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon présentées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants.
 
-Sauf indication contraire les données numériques seront présentées par leur moyenne & écart-type & comparées par des tests du t de Student si les conditions de normalité sont remplies, sinon présnetées par leur médiane avec les quartiles & comparées par des tests de Wilcoxon. Les données catégorielles seront présentées par par le nombre & le pourcentage avec son intervalle de confiance calculé par bootstrap & comparées par des tests du $\chi^2$. Des graphiques pourront être réalisés pour les variables ou tests importants. 
+Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion lié aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Devant le nombre élevés de tests à réaliser (en particulier pour le critère 5) une correction par la méthode de \textsc{Benjamini} & \textsc{Hochberg} sera appliquée.
 
 ## Calcul du nombre de cas
 
-Le critère de base est l'évolution du Z-score entre la naissance & 12 mois.  Si on estime qu'une différence entre les deux groupe de `r dd` a un sens clinique, il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2). 
+Le critère de base est l'évolution du Z-score entre la naissance & 12 mois. Si on estime qu'une différence entre les deux groupe de `r dd` a un sens clinique, il faudrait **`r nn` cas** par groupe (risque $\alpha$ 0,05 & $\beta$ 0,2).
 
+## Données manquantes
 
-### Données manquantes
+Le décompte des données manquantes sera réalisé & présenté par un tableau ou un graphique. Les variables comportant trop (\> 40%) de données manquantes ou non utilisables ne seront pas prises en compte après validation par l'investigateur coordonnateur. Aui besoin(analyse factorielle, régressions\dots) les données manquantes seront imputées (imputations multiples, 150 itérations au maximum --- package `missmDA`[@miss]) si considérées comme manquant de manière complètement aléatoire (`MCAR`) ou de manière aléatoire (`MAR`). Les données manquantes non aléatoires (`MNAR`) ne seront imputées qu'après avis de l'investigateur coordonnateur.
 
-Le décompte des données manquantes sera réalisé & présenté par un tableau ou un graphique. Les dossiers où une des données nécessaires pour l'étude du critère principal (poids à la naissance & à 12 mois, groupe...) serait manquante seront exclus de l'étude. De même les variables comportant trop de données manquantes ou non utilisables ne seront pas prises en compte.
+## Corrélations
 
-Après ce premier tri une imputation des données manquantes sera réalisée pour deux calculs : 
+Un calcul des corrélations entre toutes les variables sera réalisé & présenté sous forme de graphique (figure @fig-cor). Si certaines données présentent des corrélation très fortes, attendues ou non, elle pourront être exclues de l'étude après accord de l'investigateur coordonnateur.
 
-- l’analyse factorielle,
-- la recherche du meilleur modèle par step-by-tep descendant pour les analyses par régression (logistique ou linéaire). Néanmoins dans ce cas, après choix du modèle, les calculs seront faits avec les données réelles. 
+```{r}
+#| label: fig-cor
+#| fig-cap: "Corrélations entre les variables"
+
+zz <- patients |>
+  mutate(across(is.character, as.factor)) |> 
+  mutate(across(is.factor, as.numeric)) |> 
+  cor(use = "complete.obs") |> 
+  corrplot::corrplot(type = "lower", diag = FALSE)
+```
 
 ## Description
- 
-Les données démographiques ainsi que le bilan à la naissance seront présentés sur un tableau en comparant les deux groupes pour rechercher d'éventuels biais. 
- 
-Une analyse de corrélations (package `correlation` [@corr]) portant sur tous les items sera réalisée. À la suite de ces contrôles des variables pourront être exclues de la suite de l'analyse (trop de donnée manquantes ou variables trop corrélées) avec l'accord du promoteur. 
 
-Une analyse factorielle (package `FactoMineR` [@facto] & `factoextra` [@factoe]) sera tentée (Analyse en Correspondances Multiples) avec classification des cas si possible après imputation des données manquantes (package `MissMDA` [@missm]) .
+Les données démographiques ainsi que le bilan à la naissance seront présentés sur un tableau en comparant les deux groupes pour rechercher d'éventuels biais.
 
-## Critère principal
+# Critère principal
 
 *Comparer la croissance pondérale des nouveau-nés prématurés tardifs (`PT`) pris en charge en Unité Kangourou (`UK`) versus ceux pris en charge en néonatologie.*
 
-L'évolution du Z-score pour le poids sera comparée entre les deux groupes par un test du t de Student si les conditions de normalité sont remplies sinon par un test de Wilcoxon. Plusieurs graphiques seront dessinés :
+L'évolution du Z-score pour le poids sera étudiée par une comparaison  entre les deux groupes par un test du t de Student si les conditions de normalité sont remplies sinon par un test de Wilcoxon. Plusieurs graphiques seront dessinés :                
 
-- Comparaison simple (Box-plot ou Violin graph)
-- Évolution cas par cas (graphique en fagot)
-- Graphique en réseau d'évolution après regroupement en classe des cas.
+-   Comparaison simple (Box-plot ou Violin graph)
+-   Évolution cas par cas (graphique en fagot)
+-   Graphique en réseau d'évolution après regroupement en classes des cas.
 
-Un lien entre les données démographique ou à la naissance & l'évolution sera recherché. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant basé sur le score AIC. Pour cette détermination du meilleur modèle de régression logistique on utilisera les données après imputation des données manquantes. Par contre, une fois le modèle retenu, les calculs présentés seront ceux réalisés sur les données réelles.
+Un lien entre les données démographique ou à la naissance & l'évolution sera recherché afin de mettre en évidence d’éventuels facteurs confondants. Une analyse multivariée par régression linéaire sera ensuite réalisée en incorporant dans un premier temps toutes les variables ayant une p-value \< 0,20 sur l'analyse monovariée. Une recherche du meilleur modèle sera ensuite réalisé par un step-by-step descendant basé sur le score AIC.
 
-## Critères secondaires
+# Critères secondaires
 
-Vu le grand nombre de critères secondaires & le risque élevé de fausse conclusion liée aux tests multiples les critères secondaires ne seront étudiés que si le nombre de cas utilisables est suffisant. Devant le nombre élevés de tests à réaliser (en particulier pour le critère 5) une correction par la méthode de Holm sera appliquée.
+## Critères 1 & 2
 
-
-### Critères 1 & 2
 *Comparaison à 12 mois de l’évolution du Z-score de la taille & du PC entre les deux groupes*
 
-Le même protocole que pour le critère principal sera utilisé pour chacun des deux critères. 
+Le même protocole que pour le critère principal sera utilisé pour chacun des deux critères.
 
+## Critère 3
 
-### Critère 3
-*Comparaison de la durée de l’allaitement (mixte ou exclusif) total  en semaines entre les deux groupes. Ce critère sera évalué à 12 mois.*
+*Comparaison de la durée de l’allaitement (mixte ou exclusif) total en semaines entre les deux groupes. Ce critère sera évalué à 12 mois.*
 
 Une comparaison simple entre les deux groupe sera réalisée (test t de Student ou de Wilcoxon).
 
+## Critère 4
 
-### Critère 4
 *Comparaison du nombre d’enfants allaités à la sortie de maternité entre les deux groupes*
 
 Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
 
-### Critère 5
-*Comparaison du devenir neurologique à 12 mois entre les deux groupes* 
+## Critère 5
 
-#### Examen neurologique standard
-*Tonus axial (normal ou non), tonus périphérique (normal ou non), tenue assise (acquise ou non), acquisition d’un mode de déplacement (Oui/Non, si oui lequel), communication verbale (adaptée / décalage)*
+*Comparaison du devenir neurologique à 12 mois entre les deux groupes sur des critères physiques & radiologiques*
 
 Un tableau de corrélation sera calculé pour toutes ces données. Si certaines ont un coefficient de corrélation trop fort on n'étudiera que certaines variables (seuil à définir selon le nombre de cas utilisables).
 
-Un test  du $\chi^2$ sera réalisé pour chacun des tests retenus si possible. Dans le cas contraire des tests exact de Fisher sera utilisé. 
+Un test du $\chi^2$ sera réalisé pour chacun des tests retenus si possible. Dans le cas contraire des tests exact de Fisher sera utilisé.
 
-#### Imageries cérébrale
+Une aanalyse multivariée en régression logistique sera réalisée en prenant en compte tous les critères ayant un $p<0.2$.
 
-Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
+## Critère 6
 
-### Critère 6
 *Comparaison du nombre de ré-hospitalisations à 12 mois entre les deux groupes*
 
-Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
+Un test du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé.
 
-### Critère 7
+## Critère 7
+
 *Comparaison du nombre de prescriptions de séances de kinésithérapie à 12 mois entre les deux groupes*
 
-### Critère 8
+## Critère 8
+
 *Comparaison du nombre de prescriptions de psychomotricité à 12 mois entre les deux groupes*
 
-Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
+Un test du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé.
 
-### Critère 9
+## Critère 9
+
 *Comparaison de la présence de morbidité hospitalière (lié à l’hospitalisation initiale) entre les deux groupes (infections, ictère, détresse respiratoire, détresse neurologique, hypotonie…)*
 
-Un test  du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé. 
+Un test du $\chi^2$ sera réalisé si possible. Dans le cas contraire un test exact de Fisher sera utilisé.
 
-### Critère 10
+## Critère 10
+
 *Comparaison du temps d’autonomisation alimentaire entre les deux groupes (date de retrait de la sonde gastrique)*
 
 Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
 
-### Critère 11
+## Critère 11
+
 *Évaluation du terme corrigé de sortie entre les deux groupes.*
 
 Une comparaison simple entre les deux groupes sera réalisée (test t de Student ou de Wilcoxon).
 
-## Technique {.appendix}
+# Technique {.appendix}
 
-L'analyse statistique sera réalisée grâce au logiciel **R** [@rstat]. Outre les packages cités dans le texte, on utilisera en particulier les  packages `baseph` [@baseph] & `tidyverse` [@tidy]. Les graphiques seront principalement réalisés grâce au package `ggplot2` [@ggplot].
+L'analyse statistique sera réalisée grâce au logiciel **R** [@rstat]. Outre les packages cités dans le texte, on utilisera en particulier les packages `baseph` [@baseph] & `tidyverse` [@tidy]. Les graphiques seront principalement réalisés grâce au package `ggplot2` [@ggplot]. Dans un but de reproductibilité on utilisera la version du logiciel R & des divers packages à jour à la date de début de l'analyse (package `renv`[@renv]).
 
-Un dépôt Git sera utilisé (<https://github.com/philippemichel/nutriprema>) qui ne contiendra que le code & un jeu de données réduit, anonymisé & faussé mais aucun résultat. 
-
-
-
+Un dépôt Git sera utilisé (<https://github.com/philippemichel/nutriprema>) qui ne contiendra que le code & un jeu de données réduit, anonymisé & faussé mais aucun résultat.
